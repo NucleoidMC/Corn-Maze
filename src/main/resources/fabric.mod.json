@@ -1,0 +1,24 @@
+{
+	"schemaVersion": 1,
+	"id": "cornmaze",
+	"version": "${version}",
+	"name": "Corn Maze",
+	"description": "A maze traversal minigame for Minecraft.",
+	"authors": [
+		"haykam821"
+	],
+	"contact": {
+		"homepage": "https://github.com/haykam821/Corn-Maze#readme",
+		"issues": "https://github.com/haykam821/Corn-Maze/issues"
+	},
+	"entrypoints": {
+		"main": [
+			"io.github.haykam821.cornmaze.Main"
+		]
+	},
+	"license": "MIT",
+	"icon": "assets/cornmaze/icon.png",
+	"depends": {
+		"fabricloader": ">=0.4.0"
+	}
+}

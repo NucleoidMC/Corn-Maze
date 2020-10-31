@@ -1,0 +1,4 @@
+{
+	"gameType.cornmaze.corn_maze": "Corn Maze",
+	"text.cornmaze.win": "%s found the exit in %s minutes!"
+}
