@@ -18,8 +18,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
-import xyz.nucleoid.plasmid.game.Game;
-import xyz.nucleoid.plasmid.game.GameWorld;
+import xyz.nucleoid.plasmid.game.GameLogic;
+import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.GameOpenListener;
 import xyz.nucleoid.plasmid.game.event.GameTickListener;
 import xyz.nucleoid.plasmid.game.event.PlayerAddListener;
@@ -32,21 +32,21 @@ public class CornMazeActivePhase {
 	private static final DecimalFormat MINUTE_FORMAT = new DecimalFormat("#.#", new DecimalFormatSymbols(Locale.ROOT));
 
 	private final ServerWorld world;
-	private final GameWorld gameWorld;
+	private final GameSpace gameSpace;
 	private final CornMazeMap map;
 	private final CornMazeConfig config;
 	private final Set<PlayerRef> players;
 	private int ticks = 0;
 
-	public CornMazeActivePhase(GameWorld gameWorld, CornMazeMap map, CornMazeConfig config, Set<PlayerRef> players) {
-		this.world = gameWorld.getWorld();
-		this.gameWorld = gameWorld;
+	public CornMazeActivePhase(GameSpace gameSpace, CornMazeMap map, CornMazeConfig config, Set<PlayerRef> players) {
+		this.world = gameSpace.getWorld();
+		this.gameSpace = gameSpace;
 		this.map = map;
 		this.config = config;
 		this.players = players;
 	}
 
-	public static void setRules(Game game) {
+	public static void setRules(GameLogic game) {
 		game.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
 		game.setRule(GameRule.CRAFTING, RuleResult.DENY);
 		game.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
@@ -59,11 +59,11 @@ public class CornMazeActivePhase {
 		game.setRule(GameRule.UNSTABLE_TNT, RuleResult.DENY);
 	}
 
-	public static void open(GameWorld gameWorld, CornMazeMap map, CornMazeConfig config) {
-		Set<PlayerRef> players = gameWorld.getPlayers().stream().map(PlayerRef::of).collect(Collectors.toSet());
-		CornMazeActivePhase phase = new CornMazeActivePhase(gameWorld, map, config, players);
+	public static void open(GameSpace gameSpace, CornMazeMap map, CornMazeConfig config) {
+		Set<PlayerRef> players = gameSpace.getPlayers().stream().map(PlayerRef::of).collect(Collectors.toSet());
+		CornMazeActivePhase phase = new CornMazeActivePhase(gameSpace, map, config, players);
 
-		gameWorld.openGame(game -> {
+		gameSpace.openGame(game -> {
 			CornMazeActivePhase.setRules(game);
 
 			// Listeners
@@ -90,8 +90,8 @@ public class CornMazeActivePhase {
 				if (!this.map.getBox().contains(player.getPos())) {
 					CornMazeActivePhase.spawn(this.world, this.map, player);
 				} else if (this.map.getEndBox().contains(player.getPos())) {
-					this.gameWorld.getPlayerSet().sendMessage(this.getWinMessage(player));
-					gameWorld.close();
+					this.gameSpace.getPlayers().sendMessage(this.getWinMessage(player));
+					gameSpace.close();
 				}
 			});
 		}

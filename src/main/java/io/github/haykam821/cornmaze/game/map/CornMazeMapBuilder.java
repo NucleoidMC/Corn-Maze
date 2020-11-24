@@ -3,7 +3,6 @@ package io.github.haykam821.cornmaze.game.map;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import io.github.haykam821.cornmaze.game.CornMazeConfig;
@@ -11,10 +10,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import xyz.nucleoid.plasmid.game.map.template.MapTemplate;
+import xyz.nucleoid.plasmid.map.template.MapTemplate;
 import xyz.nucleoid.plasmid.util.BlockBounds;
 
 public class CornMazeMapBuilder {
@@ -26,35 +24,33 @@ public class CornMazeMapBuilder {
 		this.config = config;
 	}
 
-	public CompletableFuture<CornMazeMap> create() {
-		return CompletableFuture.supplyAsync(() -> {
-			MapTemplate template = MapTemplate.createEmpty();
-			CornMazeMapConfig mapConfig = this.config.getMapConfig();
+	public CornMazeMap create() {
+		MapTemplate template = MapTemplate.createEmpty();
+		CornMazeMapConfig mapConfig = this.config.getMapConfig();
 
-			BlockBounds bounds = new BlockBounds(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getScale() - 1));
+		BlockBounds bounds = new BlockBounds(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getScale() - 1));
 
-			// Make maze 2D array with default walls
-			MazeState[][] maze = new MazeState[mapConfig.getZ()][mapConfig.getX()];
-			for (int z = 0; z < maze.length; z++) {
-				for (int x = 0; x < maze[z].length; x++) {
-					this.setMazeState(x, z, MazeState.WALL, maze);
-				}
+		// Make maze 2D array with default walls
+		MazeState[][] maze = new MazeState[mapConfig.getZ()][mapConfig.getX()];
+		for (int z = 0; z < maze.length; z++) {
+			for (int x = 0; x < maze[z].length; x++) {
+				this.setMazeState(x, z, MazeState.WALL, maze);
 			}
+		}
 
-			Random random = new Random();
-			int startX = (random.nextInt((mapConfig.getX() - 1) / 2) + 1) * 2 - 1;
-			int startZ = (random.nextInt((mapConfig.getZ() - 1) / 2) + 1) * 2 - 1;
+		Random random = new Random();
+		int startX = (random.nextInt((mapConfig.getX() - 1) / 2) + 1) * 2 - 1;
+		int startZ = (random.nextInt((mapConfig.getZ() - 1) / 2) + 1) * 2 - 1;
 
-			Object2IntOpenHashMap<MazeCoordinate> targets = new Object2IntOpenHashMap<MazeCoordinate>();
-			this.formMaze(startX, startZ, maze, targets, 0);
+		Object2IntOpenHashMap<MazeCoordinate> targets = new Object2IntOpenHashMap<MazeCoordinate>();
+		this.formMaze(startX, startZ, maze, targets, 0);
 
-			MazeCoordinate endCoordinate = this.getFurthest(targets);
-			this.setMazeState(endCoordinate.getX(), endCoordinate.getZ(), MazeState.END, maze);
+		MazeCoordinate endCoordinate = this.getFurthest(targets);
+		this.setMazeState(endCoordinate.getX(), endCoordinate.getZ(), MazeState.END, maze);
 
-			this.build(bounds, template, mapConfig, maze);
+		this.build(bounds, template, mapConfig, maze);
 
-			return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig));
-		}, Util.getMainWorkerExecutor());
+		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig));
 	}
 
 	private MazeCoordinate getFurthest(Object2IntOpenHashMap<MazeCoordinate> targets) {
@@ -112,7 +108,7 @@ public class CornMazeMapBuilder {
 	}
 
 	private void build(BlockBounds bounds, MapTemplate template, CornMazeMapConfig mapConfig, MazeState[][] maze) {
-		for (BlockPos pos : bounds.iterate()) {
+		for (BlockPos pos : bounds) {
 			MazeState state = this.getMazeState(pos.getX() / mapConfig.getScale(), pos.getZ() / mapConfig.getScale() , maze);
 			
 			if (state.isTall() || pos.getY() == 0) {

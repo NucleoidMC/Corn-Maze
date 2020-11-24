@@ -1,5 +1,6 @@
 {
 	"type": "cornmaze:corn_maze",
+	"name": "Corn Maze",
 	"map": {
 		"x": 32,
 		"z": 32
