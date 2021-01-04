@@ -28,7 +28,7 @@ public class CornMazeMapBuilder {
 		MapTemplate template = MapTemplate.createEmpty();
 		CornMazeMapConfig mapConfig = this.config.getMapConfig();
 
-		BlockBounds bounds = new BlockBounds(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getScale() - 1));
+		BlockBounds bounds = new BlockBounds(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getZScale() - 1));
 
 		// Make maze 2D array with default walls
 		MazeState[][] maze = new MazeState[mapConfig.getZ()][mapConfig.getX()];
@@ -72,8 +72,8 @@ public class CornMazeMapBuilder {
 	}
 
 	private BlockBounds getBounds(int x, int z, CornMazeMapConfig mapConfig) {
-		BlockPos origin = new BlockPos(x * mapConfig.getScale(), 0, z * mapConfig.getScale());
-		return new BlockBounds(origin, origin.add(mapConfig.getScale() - 1, mapConfig.getHeight(), mapConfig.getScale() - 1));
+		BlockPos origin = new BlockPos(x * mapConfig.getXScale(), 0, z * mapConfig.getZScale());
+		return new BlockBounds(origin, origin.add(mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZScale() - 1));
 	}
 
 	private boolean isWall(int x, int z, MazeState[][] maze) {
@@ -109,7 +109,7 @@ public class CornMazeMapBuilder {
 
 	private void build(BlockBounds bounds, MapTemplate template, CornMazeMapConfig mapConfig, MazeState[][] maze) {
 		for (BlockPos pos : bounds) {
-			MazeState state = this.getMazeState(pos.getX() / mapConfig.getScale(), pos.getZ() / mapConfig.getScale() , maze);
+			MazeState state = this.getMazeState(pos.getX() / mapConfig.getXScale(), pos.getZ() / mapConfig.getZScale(), maze);
 			
 			if (state.isTall() || pos.getY() == 0) {
 				template.setBlockState(pos, state.getState());
