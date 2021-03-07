@@ -24,6 +24,7 @@ import xyz.nucleoid.plasmid.game.event.GameOpenListener;
 import xyz.nucleoid.plasmid.game.event.GameTickListener;
 import xyz.nucleoid.plasmid.game.event.PlayerAddListener;
 import xyz.nucleoid.plasmid.game.event.PlayerDeathListener;
+import xyz.nucleoid.plasmid.game.event.PlayerRemoveListener;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 import xyz.nucleoid.plasmid.util.PlayerRef;
@@ -70,6 +71,7 @@ public class CornMazeActivePhase {
 			game.on(GameOpenListener.EVENT, phase::open);
 			game.on(GameTickListener.EVENT, phase::tick);
 			game.on(PlayerAddListener.EVENT, phase::addPlayer);
+			game.on(PlayerRemoveListener.EVENT, phase::removePlayer);
 			game.on(PlayerDeathListener.EVENT, phase::onPlayerDeath);
 		});
 	}
@@ -103,6 +105,10 @@ public class CornMazeActivePhase {
 
 	private void addPlayer(ServerPlayerEntity player) {
 		player.setGameMode(GameMode.SPECTATOR);
+	}
+
+	private void removePlayer(ServerPlayerEntity player) {
+		this.players.remove(PlayerRef.of(player));
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
