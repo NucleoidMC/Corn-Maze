@@ -4,17 +4,23 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 
 public enum MazeState {
-	PATH(Blocks.BLACK_TERRACOTTA.getDefaultState(), false),
-	START(Blocks.RED_TERRACOTTA.getDefaultState(), false),
-	END(Blocks.LIME_TERRACOTTA.getDefaultState(), false),
-	WALL(Blocks.HAY_BLOCK.getDefaultState(), true);
+	PATH(Blocks.BLACK_TERRACOTTA.getDefaultState(), false, true),
+	START(Blocks.RED_TERRACOTTA.getDefaultState()),
+	END(Blocks.LIME_TERRACOTTA.getDefaultState()),
+	WALL(Blocks.HAY_BLOCK.getDefaultState(), true, false);
 
 	private final BlockState state;
 	private final boolean tall;
+	private final boolean decayable;
 
-	private MazeState(BlockState state, boolean tall) {
+	private MazeState(BlockState state, boolean tall, boolean decayable) {
 		this.state = state;
 		this.tall = tall;
+		this.decayable = decayable;
+	}
+
+	private MazeState(BlockState state) {
+		this(state, false, false);
 	}
 
 	public BlockState getState() {
@@ -23,5 +29,9 @@ public enum MazeState {
 
 	public boolean isTall() {
 		return this.tall;
+	}
+
+	public boolean isDecayable() {
+		return this.decayable;
 	}
 }

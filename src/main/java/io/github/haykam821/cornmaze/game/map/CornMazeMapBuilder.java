@@ -48,7 +48,7 @@ public class CornMazeMapBuilder {
 		MazeCoordinate endCoordinate = this.getFurthest(targets);
 		this.setMazeState(endCoordinate.getX(), endCoordinate.getZ(), MazeState.END, maze);
 
-		this.build(bounds, template, mapConfig, maze);
+		this.build(bounds, template, mapConfig, maze, random);
 
 		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig));
 	}
@@ -107,11 +107,20 @@ public class CornMazeMapBuilder {
 		}
 	}
 
-	private void build(BlockBounds bounds, MapTemplate template, CornMazeMapConfig mapConfig, MazeState[][] maze) {
+	private boolean isDecayed(MazeState state, CornMazeMapConfig mapConfig, Random random) {
+		if (!state.isDecayable()) return false;
+
+		if (mapConfig.getDecay() <= 0) return false;
+		if (mapConfig.getDecay() >= 1) return true;
+
+		return random.nextDouble() < mapConfig.getDecay();
+	}
+
+	private void build(BlockBounds bounds, MapTemplate template, CornMazeMapConfig mapConfig, MazeState[][] maze, Random random) {
 		for (BlockPos pos : bounds) {
 			MazeState state = this.getMazeState(pos.getX() / mapConfig.getXScale(), pos.getZ() / mapConfig.getZScale(), maze);
 			
-			if (state.isTall() || pos.getY() == 0) {
+			if ((state.isTall() || pos.getY() == 0) && !this.isDecayed(state, mapConfig, random)) {
 				template.setBlockState(pos, state.getState());
 			} else if (pos.getY() == mapConfig.getHeight()) {
 				template.setBlockState(pos, BARRIER_STATE);

@@ -10,7 +10,8 @@ public class CornMazeMapConfig {
 			Codec.INT.fieldOf("z").forGetter(CornMazeMapConfig::getZ),
 			Codec.INT.optionalFieldOf("height", 8).forGetter(CornMazeMapConfig::getHeight),
 			Codec.INT.optionalFieldOf("x_scale", 4).forGetter(CornMazeMapConfig::getXScale),
-			Codec.INT.optionalFieldOf("z_scale", 4).forGetter(CornMazeMapConfig::getZScale)
+			Codec.INT.optionalFieldOf("z_scale", 4).forGetter(CornMazeMapConfig::getZScale),
+			Codec.DOUBLE.optionalFieldOf("decay", 0d).forGetter(CornMazeMapConfig::getDecay)
 		).apply(instance, CornMazeMapConfig::new);
 	});
 
@@ -19,13 +20,15 @@ public class CornMazeMapConfig {
 	private final int height;
 	private final int xScale;
 	private final int zScale;
+	private final double decay;
 
-	public CornMazeMapConfig(int x, int z, int height, int xScale, int zScale) {
+	public CornMazeMapConfig(int x, int z, int height, int xScale, int zScale, double decay) {
 		this.x = x % 2 == 0 ? x + 1 : x;
 		this.z = z % 2 == 0 ? z + 1 : z;
 		this.height = height;
 		this.xScale = xScale;
 		this.zScale = zScale;
+		this.decay = decay;
 	}
 
 	public int getX() {
@@ -46,5 +49,9 @@ public class CornMazeMapConfig {
 
 	public int getZScale() {
 		return this.zScale;
+	}
+
+	public double getDecay() {
+		return this.decay;
 	}
 }
