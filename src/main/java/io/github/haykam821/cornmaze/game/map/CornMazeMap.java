@@ -3,9 +3,9 @@ package io.github.haykam821.cornmaze.game.map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import xyz.nucleoid.plasmid.map.template.MapTemplate;
-import xyz.nucleoid.plasmid.map.template.TemplateChunkGenerator;
-import xyz.nucleoid.plasmid.util.BlockBounds;
+import xyz.nucleoid.map_templates.BlockBounds;
+import xyz.nucleoid.map_templates.MapTemplate;
+import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator;
 
 public class CornMazeMap {
 	private final MapTemplate template;
@@ -15,9 +15,9 @@ public class CornMazeMap {
 
 	public CornMazeMap(MapTemplate template, BlockBounds bounds, BlockBounds startBounds, BlockBounds endBounds) {
 		this.template = template;
-		this.box = bounds.toBox();
-		this.startBox = startBounds.toBox();
-		this.endBox = endBounds.toBox();
+		this.box = bounds.asBox();
+		this.startBox = startBounds.asBox();
+		this.endBox = endBounds.asBox();
 	}
 
 	public Box getBox() {

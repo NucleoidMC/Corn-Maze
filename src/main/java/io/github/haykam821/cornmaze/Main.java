@@ -10,7 +10,7 @@ public class Main implements ModInitializer {
 	private static final String MOD_ID = "cornmaze";
 
 	private static final Identifier CORN_MAZE_ID = new Identifier(MOD_ID, "corn_maze");
-	public static final GameType<CornMazeConfig> CORN_MAZE_TYPE = GameType.register(CORN_MAZE_ID, CornMazeWaitingPhase::open, CornMazeConfig.CODEC);
+	public static final GameType<CornMazeConfig> CORN_MAZE_TYPE = GameType.register(CORN_MAZE_ID, CornMazeConfig.CODEC, CornMazeWaitingPhase::open);
 
 	@Override
 	public void onInitialize() {

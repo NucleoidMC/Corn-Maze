@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.haykam821.cornmaze.game.map.CornMazeMapConfig;
-import xyz.nucleoid.plasmid.game.config.PlayerConfig;
+import xyz.nucleoid.plasmid.game.common.config.PlayerConfig;
 
 public class CornMazeConfig {
 	public static final Codec<CornMazeConfig> CODEC = RecordCodecBuilder.create(instance -> {

@@ -12,8 +12,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import xyz.nucleoid.plasmid.map.template.MapTemplate;
-import xyz.nucleoid.plasmid.util.BlockBounds;
+import xyz.nucleoid.map_templates.BlockBounds;
+import xyz.nucleoid.map_templates.MapTemplate;
 
 public class CornMazeMapBuilder {
 	private static final BlockState BARRIER_STATE = Blocks.BARRIER.getDefaultState();
@@ -28,7 +28,7 @@ public class CornMazeMapBuilder {
 		MapTemplate template = MapTemplate.createEmpty();
 		CornMazeMapConfig mapConfig = this.config.getMapConfig();
 
-		BlockBounds bounds = new BlockBounds(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getZScale() - 1));
+		BlockBounds bounds = BlockBounds.of(BlockPos.ORIGIN, new BlockPos(mapConfig.getX() * mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZ() * mapConfig.getZScale() - 1));
 
 		// Make maze 2D array with default walls
 		MazeState[][] maze = new MazeState[mapConfig.getZ()][mapConfig.getX()];
@@ -73,7 +73,7 @@ public class CornMazeMapBuilder {
 
 	private BlockBounds getBounds(int x, int z, CornMazeMapConfig mapConfig) {
 		BlockPos origin = new BlockPos(x * mapConfig.getXScale(), 0, z * mapConfig.getZScale());
-		return new BlockBounds(origin, origin.add(mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZScale() - 1));
+		return BlockBounds.of(origin, origin.add(mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZScale() - 1));
 	}
 
 	private boolean isWall(int x, int z, MazeState[][] maze) {
