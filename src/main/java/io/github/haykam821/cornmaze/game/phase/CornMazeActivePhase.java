@@ -23,6 +23,8 @@ import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents;
+import xyz.nucleoid.plasmid.game.player.PlayerOffer;
+import xyz.nucleoid.plasmid.game.player.PlayerOfferResult;
 import xyz.nucleoid.plasmid.game.rule.GameRuleType;
 import xyz.nucleoid.plasmid.util.PlayerRef;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -67,7 +69,7 @@ public class CornMazeActivePhase {
 			// Listeners
 			activity.listen(GameActivityEvents.ENABLE, phase::enable);
 			activity.listen(GameActivityEvents.TICK, phase::tick);
-			activity.listen(GamePlayerEvents.ADD, phase::addPlayer);
+			activity.listen(GamePlayerEvents.OFFER, phase::offerPlayer);
 			activity.listen(GamePlayerEvents.REMOVE, phase::removePlayer);
 			activity.listen(PlayerDeathEvent.EVENT, phase::onPlayerDeath);
 		});
@@ -100,8 +102,10 @@ public class CornMazeActivePhase {
 		return new TranslatableText("text.cornmaze.win", winner.getDisplayName(), MINUTE_FORMAT.format(this.ticks / 20d / 60d)).formatted(Formatting.GOLD);
 	}
 
-	private void addPlayer(ServerPlayerEntity player) {
-		player.changeGameMode(GameMode.SPECTATOR);
+	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
+		return offer.accept(this.world, this.map.getSpawn()).and(() -> {
+			offer.player().changeGameMode(GameMode.SPECTATOR);
+		});
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
@@ -114,8 +118,8 @@ public class CornMazeActivePhase {
 	}
 
 	public static void spawn(ServerWorld world, CornMazeMap map, ServerPlayerEntity player) {
-		Vec3d center = map.getStartBox().getCenter();
-		player.teleport(world, center.getX(), map.getBox().minY + 1, center.getZ(), 0, 0);
+		Vec3d spawn = map.getSpawn();
+		player.teleport(world, spawn.getX(), spawn.getY(), spawn.getZ(), 0, 0);
 	}
 
 	static {
