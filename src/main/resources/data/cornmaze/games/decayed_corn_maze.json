@@ -1,5 +1,6 @@
 {
 	"type": "cornmaze:corn_maze",
+	"icon": "minecraft:bread",
 	"map": {
 		"x": 32,
 		"z": 32,
