@@ -13,7 +13,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
@@ -99,7 +98,7 @@ public class CornMazeActivePhase {
 	}
 
 	private Text getWinMessage(ServerPlayerEntity winner) {
-		return new TranslatableText("text.cornmaze.win", winner.getDisplayName(), MINUTE_FORMAT.format(this.ticks / 20d / 60d)).formatted(Formatting.GOLD);
+		return Text.translatable("text.cornmaze.win", winner.getDisplayName(), MINUTE_FORMAT.format(this.ticks / 20d / 60d)).formatted(Formatting.GOLD);
 	}
 
 	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
