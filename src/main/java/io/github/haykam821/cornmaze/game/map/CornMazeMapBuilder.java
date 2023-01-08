@@ -2,7 +2,6 @@ package io.github.haykam821.cornmaze.game.map;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import io.github.haykam821.cornmaze.game.CornMazeConfig;
@@ -12,6 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import xyz.nucleoid.map_templates.BlockBounds;
 import xyz.nucleoid.map_templates.MapTemplate;
 
@@ -38,7 +38,7 @@ public class CornMazeMapBuilder {
 			}
 		}
 
-		Random random = new Random();
+		Random random = Random.createLocal();
 		int startX = (random.nextInt((mapConfig.getX() - 1) / 2) + 1) * 2 - 1;
 		int startZ = (random.nextInt((mapConfig.getZ() - 1) / 2) + 1) * 2 - 1;
 
