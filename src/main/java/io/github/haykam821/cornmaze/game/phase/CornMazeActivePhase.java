@@ -17,7 +17,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameActivity;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -94,7 +93,7 @@ public class CornMazeActivePhase {
 		for (PlayerRef playerRef : this.players) {
 			playerRef.ifOnline(this.world, player -> {
 				if (!this.map.getBox().contains(player.getPos())) {
-					CornMazeActivePhase.spawn(this.world, this.map, player);
+					this.map.spawn(player, this.world);
 				} else if (this.map.getEndBox().contains(player.getPos())) {
 					this.gameSpace.getPlayers().sendMessage(this.getWinMessage(player));
 					gameSpace.close(GameCloseReason.FINISHED);
@@ -108,9 +107,7 @@ public class CornMazeActivePhase {
 	}
 
 	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-		return offer.accept(this.world, this.map.getSpawn()).and(() -> {
-			offer.player().changeGameMode(GameMode.SPECTATOR);
-		});
+		return this.map.acceptOffer(offer, this.world, GameMode.SPECTATOR);
 	}
 
 	private void removePlayer(ServerPlayerEntity player) {
@@ -118,13 +115,8 @@ public class CornMazeActivePhase {
 	}
 
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
-		CornMazeActivePhase.spawn(this.world, this.map, player);
+		this.map.spawn(player, this.world);
 		return ActionResult.FAIL;
-	}
-
-	public static void spawn(ServerWorld world, CornMazeMap map, ServerPlayerEntity player) {
-		Vec3d spawn = map.getSpawn();
-		player.teleport(world, spawn.getX(), spawn.getY(), spawn.getZ(), 0, 0);
 	}
 
 	static {

@@ -7,7 +7,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.fantasy.RuntimeWorldConfig;
 import xyz.nucleoid.plasmid.game.GameOpenContext;
@@ -48,7 +47,6 @@ public class CornMazeWaitingPhase {
 			CornMazeActivePhase.setRules(activity);
 
 			// Listeners
-			activity.listen(GamePlayerEvents.ADD, phase::addPlayer);
 			activity.listen(PlayerDeathEvent.EVENT, phase::onPlayerDeath);
 			activity.listen(GameActivityEvents.TICK, phase::tick);
 			activity.listen(GamePlayerEvents.OFFER, phase::offerPlayer);
@@ -59,15 +57,13 @@ public class CornMazeWaitingPhase {
 	private void tick() {
 		for (ServerPlayerEntity player : this.gameSpace.getPlayers()) {
 			if (!this.map.getStartBox().contains(player.getPos())) {
-				CornMazeActivePhase.spawn(this.world, this.map, player);
+				this.map.spawn(player, this.world);
 			}
 		}
 	}
 
 	private PlayerOfferResult offerPlayer(PlayerOffer offer) {
-		return offer.accept(this.world, Vec3d.ZERO).and(() -> {
-			offer.player().changeGameMode(GameMode.ADVENTURE);
-		});
+		return this.map.acceptOffer(offer, this.world, GameMode.ADVENTURE);
 	}
 
 	private GameResult requestStart() {
@@ -75,12 +71,8 @@ public class CornMazeWaitingPhase {
 		return GameResult.ok();
 	}
 
-	private void addPlayer(ServerPlayerEntity player) {
-		CornMazeActivePhase.spawn(this.world, this.map, player);
-	}
-
 	private ActionResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
-		CornMazeActivePhase.spawn(this.world, this.map, player);
+		this.map.spawn(player, this.world);
 		return ActionResult.FAIL;
 	}
 }

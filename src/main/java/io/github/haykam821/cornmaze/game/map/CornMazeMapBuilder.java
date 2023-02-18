@@ -51,13 +51,14 @@ public class CornMazeMapBuilder {
 
 		this.build(bounds, template, mapConfig, maze, random);
 
-		BlockBounds barrierBounds = this.getBarrierBounds(startX, startZ, mapConfig, maze);
+		Direction startDirection = this.getStartDirection(startX, startZ, maze);
+		BlockBounds barrierBounds = this.getBounds(startX + startDirection.getOffsetX(), startZ + startDirection.getOffsetZ(), mapConfig, true);
 
 		for (BlockPos pos : barrierBounds) {
 			template.setBlockState(pos, BARRIER_STATE);
 		}
 
-		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig), barrierBounds);
+		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig), barrierBounds, startDirection);
 	}
 
 	private MazeCoordinate getFurthest(Object2IntOpenHashMap<MazeCoordinate> targets) {
@@ -154,10 +155,5 @@ public class CornMazeMapBuilder {
 		}
 
 		return null;
-	}
-
-	private BlockBounds getBarrierBounds(int startX, int startZ, CornMazeMapConfig mapConfig, MazeState[][] maze) {
-		Direction direction = this.getStartDirection(startX, startZ, maze);
-		return this.getBounds(startX + direction.getOffsetX(), startZ + direction.getOffsetZ(), mapConfig, true);
 	}
 }
