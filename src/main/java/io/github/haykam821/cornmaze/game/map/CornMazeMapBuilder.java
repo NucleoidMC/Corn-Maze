@@ -17,6 +17,7 @@ import xyz.nucleoid.map_templates.MapTemplate;
 
 public class CornMazeMapBuilder {
 	private static final BlockState BARRIER_STATE = Blocks.BARRIER.getDefaultState();
+	public static final BlockState AIR_STATE = Blocks.AIR.getDefaultState();
 
 	private final CornMazeConfig config;
 
@@ -50,7 +51,13 @@ public class CornMazeMapBuilder {
 
 		this.build(bounds, template, mapConfig, maze, random);
 
-		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig));
+		BlockBounds barrierBounds = this.getBarrierBounds(startX, startZ, mapConfig, maze);
+
+		for (BlockPos pos : barrierBounds) {
+			template.setBlockState(pos, BARRIER_STATE);
+		}
+
+		return new CornMazeMap(template, bounds, this.getBounds(startX, startZ, mapConfig), this.getBounds(endCoordinate.getX(), endCoordinate.getZ(), mapConfig), barrierBounds);
 	}
 
 	private MazeCoordinate getFurthest(Object2IntOpenHashMap<MazeCoordinate> targets) {
@@ -71,9 +78,14 @@ public class CornMazeMapBuilder {
 		return maze[z][x];
 	}
 
+	private BlockBounds getBounds(int x, int z, CornMazeMapConfig mapConfig, boolean inner) {
+		int shrinkY = inner ? 1 : 0;
+		BlockPos origin = new BlockPos(x * mapConfig.getXScale(), shrinkY, z * mapConfig.getZScale());
+		return BlockBounds.of(origin, origin.add(mapConfig.getXScale() - 1, mapConfig.getHeight() - shrinkY * 2, mapConfig.getZScale() - 1));
+	}
+
 	private BlockBounds getBounds(int x, int z, CornMazeMapConfig mapConfig) {
-		BlockPos origin = new BlockPos(x * mapConfig.getXScale(), 0, z * mapConfig.getZScale());
-		return BlockBounds.of(origin, origin.add(mapConfig.getXScale() - 1, mapConfig.getHeight(), mapConfig.getZScale() - 1));
+		return this.getBounds(x, z, mapConfig, false);
 	}
 
 	private boolean isWall(int x, int z, MazeState[][] maze) {
@@ -126,5 +138,26 @@ public class CornMazeMapBuilder {
 				template.setBlockState(pos, BARRIER_STATE);
 			}
 		}
+	}
+
+	private Direction getStartDirection(int startX, int startZ, MazeState[][] maze) {
+		for (Direction direction : Direction.Type.HORIZONTAL) {
+			int x = startX + direction.getOffsetX();
+			if (x <= 0 || x >= maze[0].length) continue;
+
+			int z = startZ + direction.getOffsetZ();
+			if (z <= 0 || z >= maze.length) continue;
+
+			if (!this.getMazeState(x, z, maze).isTall()) {
+				return direction;
+			}
+		}
+
+		return null;
+	}
+
+	private BlockBounds getBarrierBounds(int startX, int startZ, CornMazeMapConfig mapConfig, MazeState[][] maze) {
+		Direction direction = this.getStartDirection(startX, startZ, maze);
+		return this.getBounds(startX + direction.getOffsetX(), startZ + direction.getOffsetZ(), mapConfig, true);
 	}
 }

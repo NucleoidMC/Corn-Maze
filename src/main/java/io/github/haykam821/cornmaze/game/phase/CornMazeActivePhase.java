@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 
 import io.github.haykam821.cornmaze.game.CornMazeConfig;
 import io.github.haykam821.cornmaze.game.map.CornMazeMap;
+import io.github.haykam821.cornmaze.game.map.CornMazeMapBuilder;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import xyz.nucleoid.plasmid.game.GameActivity;
@@ -79,6 +81,10 @@ public class CornMazeActivePhase {
 			playerRef.ifOnline(this.world, player -> {
 				player.changeGameMode(GameMode.ADVENTURE);
 			});
+		}
+
+		for (BlockPos pos : this.map.getBarrierBounds()) {
+			this.world.setBlockState(pos, CornMazeMapBuilder.AIR_STATE);
 		}
 	}
 
