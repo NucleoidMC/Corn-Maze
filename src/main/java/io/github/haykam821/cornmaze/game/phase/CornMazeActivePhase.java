@@ -38,6 +38,7 @@ public class CornMazeActivePhase {
 	private final CornMazeConfig config;
 	private final Set<PlayerRef> players;
 	private int ticks = 0;
+	private int ticksUntilClose = -1;
 
 	public CornMazeActivePhase(GameSpace gameSpace, ServerWorld world, CornMazeMap map, CornMazeConfig config, Set<PlayerRef> players) {
 		this.world = world;
@@ -88,18 +89,31 @@ public class CornMazeActivePhase {
 	}
 
 	private void tick() {
+		// Decrease ticks until game end to zero
+		if (this.isGameEnding()) {
+			if (this.ticksUntilClose == 0) {
+				this.gameSpace.close(GameCloseReason.FINISHED);
+			}
+
+			this.ticksUntilClose -= 1;
+		}
+
 		this.ticks += 1;
 
 		for (PlayerRef playerRef : this.players) {
 			playerRef.ifOnline(this.world, player -> {
 				if (!this.map.getBox().contains(player.getPos())) {
 					this.map.spawn(player, this.world);
-				} else if (this.map.getEndBox().contains(player.getPos())) {
+				} else if (!this.isGameEnding() && this.map.getEndBox().contains(player.getPos())) {
 					this.gameSpace.getPlayers().sendMessage(this.getWinMessage(player));
-					gameSpace.close(GameCloseReason.FINISHED);
+					this.ticksUntilClose = this.config.getTicksUntilClose().get(this.world.getRandom());
 				}
 			});
 		}
+	}
+
+	private boolean isGameEnding() {
+		return this.ticksUntilClose >= 0;
 	}
 
 	private Text getWinMessage(ServerPlayerEntity winner) {
