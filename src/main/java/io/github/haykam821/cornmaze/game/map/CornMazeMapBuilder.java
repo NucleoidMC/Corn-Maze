@@ -213,7 +213,7 @@ public class CornMazeMapBuilder {
 	}
 
 	private static float getStartYaw(Direction direction) {
-		return direction.getAxis().isVertical() ? VERTICAL_START_YAW : direction.asRotation();
+		return direction.getAxis().isVertical() ? VERTICAL_START_YAW : direction.getPositiveHorizontalDegrees();
 	}
 
 	private static float getStartPitch(Direction direction) {
